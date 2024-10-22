@@ -1,53 +1,70 @@
-﻿
-class Program
+﻿class Program
 {
     static void Main()
     {
         Security security = new Security();
-        string text;
+        string text = Security.Input();
+        int[] ints = new int[10] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 0 };
 
-        text = Security.Input();
-        int[] ints = new int[10]{ 1, 2, 3, 4, 5, 6, 7 , 8, 9, 0};
+        string enText = security.Coding(text, ints);
+        string origText = security.DeCoding(enText, ints);
 
-        //Console.WriteLine(text);
-        security.Coding(text, ints);
-
+        Console.WriteLine($"Шифрованный текст: {enText}");
+        Console.WriteLine($"Расшифрованный текст: {origText}");
 
     }
 }
 //{А,Б,..,Я,<пробел>} 17
 
-class Security {
+class Security
+{
+    public int[] Cn;
     public static string Input()
     {
+        Console.Write("Введите исходный текст: ");
         return Console.ReadLine();
     }
-
-    public void Coding(string ioText, int[]Cn)
+    public string Coding(string ioText, int[] Cn)
     {
-        blocks = Blocking(ioText);
-        foreach(string block in blocks)
+        List<string> blocks = new List<string>();
+        blocks = Blocking(ioText, blocks);
+        for (int i = 0; i < blocks.Count; i++)
         {
-            Console.WriteLine($"До кодирования: {block}");
+            char[] chars = blocks[i].ToCharArray();
+            char[] encodedChars = new char[chars.Length];
 
-            char[] chars = block.ToCharArray();
-
-            for(int i=0; i<block.Length; i++)
+            //Кодирование (перестановка)
+            for (int j = 0; j < blocks[i].Length; j++)
             {
-                chars[i] = chars[Cn[i]];
+                encodedChars[j] = chars[Cn[j]];
+            }
+            blocks[i] = new string(encodedChars);
+        }
+        return string.Join("", blocks);
+    }
+    public string DeCoding(string ioText, int[] Cn)
+    {
+        List<string> blocks = new List<string>();
+        blocks = Blocking(ioText, blocks);
+        for (int i = 0; i < blocks.Count; i++)
+        {
+            char[] encodedChars = blocks[i].ToCharArray();
+            char[] decodedChars = new char[encodedChars.Length];
+
+            for (int j = 0; j < blocks[i].Length; j++)
+            {
+                decodedChars[Cn[j]] = encodedChars[j];
             }
 
-            Console.WriteLine($"После кодирования: {chars}");
-
+            blocks[i] = new string(decodedChars);
         }
+        return string.Join("", blocks);
     }
 
-    private List<string> blocks = new List<string>();
-    public int[] Cn;
 
-    private List<string> Blocking(string ioText)
+    //Функция для разбиения на блоки
+    private List<string> Blocking(string ioText, List<string> blocks)
     {
-
         for (int i = 0; i < ioText.Length; i += 10)
         {
             // Извлекаем подстроку длиной до 10 символов
@@ -56,15 +73,11 @@ class Security {
             // Если блок меньше 10 символов, дополняем пробелами
             while (block.Length < 10)
             {
-                block += '*';
+                block += ' ';
             }
-
             blocks.Add(block);
         }
-
         return blocks;
     }
-
-
 }
 

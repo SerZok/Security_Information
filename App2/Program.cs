@@ -4,7 +4,7 @@
     {
         Security security = new Security();
         string text = Security.Input();
-        int[] ints = new int[10] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 0 };
+        int[] ints = new int[17] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 0 };
 
         string enText = security.Coding(text, ints);
         string origText = security.DeCoding(enText, ints);
@@ -65,13 +65,10 @@ class Security
     //Функция для разбиения на блоки
     private List<string> Blocking(string ioText, List<string> blocks)
     {
-        for (int i = 0; i < ioText.Length; i += 10)
+        for (int i = 0; i < ioText.Length; i += 17)
         {
-            // Извлекаем подстроку длиной до 10 символов
-            string block = ioText.Substring(i, Math.Min(10, ioText.Length - i));
-
-            // Если блок меньше 10 символов, дополняем пробелами
-            while (block.Length < 10)
+            string block = ioText.Substring(i, Math.Min(17, ioText.Length - i));
+            while (block.Length < 17)
             {
                 block += ' ';
             }

@@ -37,7 +37,6 @@ class Security
             alphabetToIndex[symbol] = i;
         }
     }
-
     public string Encrypt(string text, int A, int C, int seed)
     {
         PRNG prng = new PRNG(A, C, seed); // Создаем генератор ПСЧ

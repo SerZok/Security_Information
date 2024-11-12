@@ -1,5 +1,5 @@
-﻿using System.Collections;
-using System.Security.Cryptography;
+﻿using System;
+using System.Collections;
 using System.Text;
 
 namespace App4
@@ -14,15 +14,16 @@ namespace App4
             //long weakKey3 = 2242545357694045710;
             //long weakKey4 = 1620419871601550590;
             //long strongKey1 = 0x101010101010;
-            string text = "AAAAAAAA";
+            string text = "eternity";
             Console.WriteLine($"Исходный текст: \"{text}\"");
 
-            long keyLong = 0x25df32ac2473dea2;   
+            long keyLong = 0x616c656b6f73;   
 
             var res1 = DES.Encrypt(text, keyLong);
-            foreach (var item in res1)
-                Console.WriteLine(item);    
-            Console.WriteLine($"Зашифрованный текст: \"{res1}\", Кол-во байт: {res1.Length}");
+            var strRes1 = Encoding.ASCII.GetString(res1);
+            Console.WriteLine($"Зашифрованный текст: \"{strRes1}\", Кол-во байт: {res1.Length}");
+
+            
 
            var res2 = DES.Decrypt(res1, keyLong);
             foreach (var item in res2)
@@ -147,7 +148,7 @@ namespace App4
              1, 1, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 1
         };
 
-        public static string Encrypt(string text, long key)
+        public static byte[] Encrypt(string text, long key)
         {
             //1. Разбиение текста на блоки по 8 байт
             List<byte[]> bytes = To8Byte(text);
@@ -161,9 +162,26 @@ namespace App4
             //Каждый блок по отдельности
             foreach (var Block8 in bytes)
             {
+                BitArray Bits64 = new BitArray(Block8);
+
+                // Изменение порядка битов в каждом блоке по 8 бит
+                for (int i = 0; i < Bits64.Length; i += 8)
+                {
+                    bool[] reversedBlock = new bool[8];
+                    for (int j = 0; j < 8; j++)
+                    {
+                        reversedBlock[j] = Bits64[i + (7 - j)]; // Переворачиваем порядок битов
+                    }
+                    for (int j = 0; j < 8; j++)
+                    {
+                        Bits64[i + j] = reversedBlock[j]; // Записываем перевернутый блок обратно
+                    }
+                }
+
                 //2. Начальная перестановка битов (IP)
-                BitArray Bits64 = new (Block8);
                 Bits64 = Swap(Bits64, IP);
+
+                //Bits64 = Block8.CopyTo(Bits64, 0);
 
                 BitArray L = new(32);
                 BitArray R = new(32);
@@ -173,15 +191,15 @@ namespace App4
                 for (int i = 0; i < 16; i++)
                 {
                     var oldR = R;
-                    R = L.Xor(Func(oldR, Keys[i]));
+                    R = L.Xor(Func(R, Keys[i]));
                     L = oldR;
                 }
 
                 BitArray resBits = new BitArray(64);
                 for (int i = 0; i < 32; i++)
                 {
-                    resBits[i] = L[i];
-                    resBits[32 + i] = R[i];
+                    resBits[i] = R[i];
+                    resBits[32 + i] = L[i];
                 }
 
                 //Обратная перестановка (IP_INV)
@@ -190,13 +208,14 @@ namespace App4
                 resBits.CopyTo(byteArray, bytePosition);
                 bytePosition += resBits.Length / 8;
             }
-            return Encoding.ASCII.GetString(byteArray);
+            //return Encoding.ASCII.GetString(byteArray);
+            return byteArray;
         }
 
-        public static string Decrypt(string text, long key)
+        public static string Decrypt(byte[] text, long key)
         {
             //1. Разбиение текста на блоки по 8 байт
-            List<byte[]> bytes = To8Byte(text);
+            List<byte[]> bytes = To8Byte2(text);
 
             byte[] byteArray = new byte[8 * bytes.Count];
             int bytePosition = 0;
@@ -209,6 +228,21 @@ namespace App4
             {
                 //2. Начальная перестановка битов (IP)
                 BitArray Bits64 = new(Block8);
+
+                // Изменение порядка битов в каждом блоке по 8 бит
+                for (int i = 0; i < Bits64.Length; i += 8)
+                {
+                    bool[] reversedBlock = new bool[8];
+                    for (int j = 0; j < 8; j++)
+                    {
+                        reversedBlock[j] = Bits64[i + (7 - j)]; // Переворачиваем порядок битов
+                    }
+                    for (int j = 0; j < 8; j++)
+                    {
+                        Bits64[i + j] = reversedBlock[j]; // Записываем перевернутый блок обратно
+                    }
+                }
+
                 Bits64 = Swap(Bits64, IP);
 
                 BitArray L = new(32);
@@ -270,11 +304,11 @@ namespace App4
                 SBlocks.Add(sBlock);
             }
 
-            //Работа с S блоками
+            //Работа с S блоками (правильно 100%)
             BitArray resBits = SFunc(SBlocks);
 
             //Перестановка P
-            Swap(resBits, P);
+            resBits=Swap(resBits, P);
             return resBits;
         }
 
@@ -320,10 +354,11 @@ namespace App4
             return swapBlock;
         }
 
-        private static List<byte[]> To8Byte(string text)
+        private static List<byte[]> To8Byte(string text) //МБ тут надо 
         {
             List<byte[]> res = new List<byte[]>();
-            byte[] bytes = Encoding.ASCII.GetBytes(text);
+            byte[] bytes = Encoding.UTF8.GetBytes(text);
+
 
             for (int i = 0; i < bytes.Length; i += 8)
             {
@@ -345,11 +380,49 @@ namespace App4
             return res;
         }
 
+        private static List<byte[]> To8Byte2(byte[] text) //МБ тут надо 
+        {
+            List<byte[]> res = new List<byte[]>();
+
+            for (int i = 0; i < text.Length; i += 8)
+            {
+                byte[] block = new byte[8];
+                int bytesToCopy = Math.Min(8, text.Length - i);
+
+                Array.Copy(text, i, block, 0, bytesToCopy);
+
+                //Если последний блок <8байт то заполняем
+                if (bytesToCopy < 8)
+                {
+                    for (int j = bytesToCopy; j < 8; j++)
+                        block[j] = 0;
+                }
+
+                res.Add(block);
+            }
+
+            return res;
+        }
+
         private static List<BitArray> CreateKeys(long key)
         {
             List<BitArray> result = new List<BitArray>();
             BitArray res = new BitArray(56);
             BitArray keyBits = new BitArray(BitConverter.GetBytes(key));// Правильно
+
+            BitArray reversedBits = new BitArray(64);
+            // Переворачивание битов
+            for (int i = 0; i < keyBits.Length; i++)
+            {
+                reversedBits[keyBits.Length - 1 - i] = keyBits[i];
+            }
+
+            // Копирование перевернутого массива обратно в res
+            for (int i = 0; i < keyBits.Length; i++)
+            {
+                keyBits[i] = reversedBits[i];
+            }
+
 
             //перестановка PC1
             for (int i = 0; i < PC1.Length; i++)
@@ -365,7 +438,6 @@ namespace App4
             //Шестандцать - 56 битных ключей
             for (int i=0; i < 16; i++)
             {
-
                 //Сдвиг влево
                 Shift(LKey, i);
                 Shift(RKey, i);
@@ -391,7 +463,7 @@ namespace App4
             }
 
             return result;
-        }
+        } 
 
         /// <summary>
         /// Копирование половинок <3

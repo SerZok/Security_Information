@@ -191,12 +191,12 @@ namespace App4
                 for (int i = 0; i < 16; i++)
                 {
                     var oldR = R;
-                    R = L.Xor(Func(R, Keys[i]));
+                    R = L.Xor (Func(oldR, Keys[i]));
                     L = oldR;
                 }
 
                 BitArray resBits = new BitArray(64);
-                for (int i = 0; i < 32; i++)
+                for (int i = 0; i < 32; i++) //Перед склеиванием поменял местами
                 {
                     resBits[i] = R[i];
                     resBits[32 + i] = L[i];
@@ -258,10 +258,10 @@ namespace App4
                 }
 
                 BitArray resBits = new BitArray(64);
-                for (int i = 0; i < 32; i++)
+                for (int i = 0; i < 32; i++) //Перед склеиванием поменял местами
                 {
-                    resBits[i] = L[i];
-                    resBits[32 + i] = R[i];
+                    resBits[i] = R[i];
+                    resBits[32 + i] = L[i];
                 }
 
                 //Обратная перестановка (IP_INV)
@@ -354,7 +354,7 @@ namespace App4
             return swapBlock;
         }
 
-        private static List<byte[]> To8Byte(string text) //МБ тут надо 
+        private static List<byte[]> To8Byte(string text)
         {
             List<byte[]> res = new List<byte[]>();
             byte[] bytes = Encoding.UTF8.GetBytes(text);
@@ -380,7 +380,7 @@ namespace App4
             return res;
         }
 
-        private static List<byte[]> To8Byte2(byte[] text) //МБ тут надо 
+        private static List<byte[]> To8Byte2(byte[] text)
         {
             List<byte[]> res = new List<byte[]>();
 
@@ -411,18 +411,12 @@ namespace App4
             BitArray keyBits = new BitArray(BitConverter.GetBytes(key));// Правильно
 
             BitArray reversedBits = new BitArray(64);
-            // Переворачивание битов
             for (int i = 0; i < keyBits.Length; i++)
-            {
                 reversedBits[keyBits.Length - 1 - i] = keyBits[i];
-            }
 
             // Копирование перевернутого массива обратно в res
             for (int i = 0; i < keyBits.Length; i++)
-            {
                 keyBits[i] = reversedBits[i];
-            }
-
 
             //перестановка PC1
             for (int i = 0; i < PC1.Length; i++)
@@ -443,7 +437,6 @@ namespace App4
                 Shift(RKey, i);
 
                 BitArray Key56 = new BitArray(56);
-
                 for (int k = 0; k < 28; k++)
                 {
                     Key56[k] = LKey[k];

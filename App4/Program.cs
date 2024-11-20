@@ -1,4 +1,8 @@
-﻿using System.Text;
+﻿#define BIT
+#define WEAK
+using System.Text;
+
+
 
 internal class Programm
 {
@@ -11,9 +15,9 @@ internal class Programm
         Console.WriteLine($"ОТ: \"{inputStr}\"");
 
         DES.GetKeys(keyStr);
-        Console.WriteLine("ШТ:");
+#if BIT
         string strRes1 = "";
-        //Шифрование
+         Console.WriteLine("Шифрограмма: ");
         foreach (string keyString in DES.inTextBlocks)
         {
             bool[] bitArray = DES.StringToBitArray(keyString);
@@ -25,7 +29,26 @@ internal class Programm
             Console.WriteLine($"{encodeStr}");
         }
         Console.WriteLine(strRes1);
+#else
+        Console.WriteLine("Шифрограмма с искаженным битом: ");
+        string strRes1 = "";
+        foreach (string keyString in DES.inTextBlocks)
+        {
+            bool[] bitArray = DES.StringToBitArray(keyString);
+            bool[] encodeBool = DES.Encode(bitArray);
+            DES.outBoolBlocks.Add(encodeBool);
+            string encodeStr = DES.ConvertBoolArrayToString(encodeBool);
+            DES.outTextBlocks.Add(encodeStr);
+            Console.WriteLine($"{encodeStr}");
+            strRes1 += encodeStr;
+        }
+        DES.outBoolBlocks[0][0] = !DES.outBoolBlocks[0][0];
+        Console.WriteLine(strRes1);
+#endif
 
+        
+
+#if WEAK
         Console.WriteLine("Расшифрованная строка со слабым ключом, путем повторного шифрования: ");
         string resDES = "";
         foreach (bool[] keyBool in DES.outBoolBlocks)
@@ -37,8 +60,9 @@ internal class Programm
         }
         Console.WriteLine(resDES);
 
+#else
         //Расшифровка
-        Console.WriteLine("\nОТ: ");
+        Console.WriteLine("\nРасшифровка: ");
         string strRes2 = "";
         foreach (bool[] keyBool in DES.outBoolBlocks)
         {
@@ -48,6 +72,7 @@ internal class Programm
         };
         Console.WriteLine(strRes2);
 
+#endif
     }
 }
 

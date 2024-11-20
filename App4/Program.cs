@@ -2,14 +2,12 @@
 #define WEAK
 using System.Text;
 
-
-
 internal class Programm
 {
     public static void Main()
     {
         //string KEY = "616c656b6f73";
-        string keyStr = "25df 32ac 2473 dea2";
+        string keyStr = "0101 0101 0101 0101";
         string inputStr = "Hello world! IVT-42-21 Zaytsev Sergey A";
         string inputEncr = DES.GetBlock(inputStr);
         Console.WriteLine($"ОТ: \"{inputStr}\"");
@@ -49,7 +47,7 @@ internal class Programm
         
 
 #if WEAK
-        Console.WriteLine("Расшифрованная строка со слабым ключом, путем повторного шифрования: ");
+        Console.WriteLine("Шифрование + Шифрование = ОТ (слабый ключ): ");
         string resDES = "";
         foreach (bool[] keyBool in DES.outBoolBlocks)
         {
@@ -71,7 +69,6 @@ internal class Programm
             strRes2 += decodeStr;
         };
         Console.WriteLine(strRes2);
-
 #endif
     }
 }

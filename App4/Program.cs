@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Text;
 
 internal class Programm
 {
@@ -35,6 +33,7 @@ internal class Programm
 
 public class DES
 {
+    //16 - сгенерированных ключей
     public static List<bool[]> keys = new List<bool[]>();
     public static List<string> inTextBlocks = new List<string>();
     public static List<bool[]> outBoolBlocks = new List<bool[]>();
@@ -162,9 +161,7 @@ public class DES
             for (int i = 0; i < 8; i++)
             {
                 if (index < 64)
-                {
                     bits[index++] = (b & (1 << (7 - i))) != 0;
-                }
             }
         }
         return bits;
@@ -178,9 +175,7 @@ public class DES
         byte[] bytes = new byte[bytesCount];
 
         for (int i = 0; i < bytesCount; i++)
-        {
             bytes[i] = Convert.ToByte(hexString.Substring(i * 2, 2), 16);
-        }
 
         // Создаем массив битов длиной 64
         bool[] bits = new bool[64];
@@ -191,9 +186,7 @@ public class DES
             for (int i = 0; i < 8; i++)
             {
                 if (index < 64)
-                {
                     bits[index++] = (b & (1 << (7 - i))) != 0;
-                }
             }
         }
 
@@ -208,27 +201,21 @@ public class DES
     {
         bool[] bitsPermutation = new bool[64];
         for (int i = 0; i < 64; i++)
-        {
             bitsPermutation[i] = bits[IP[i]];
-        }
         return bitsPermutation;
     }
     public static bool[] BitArrayPermutationIP_1(bool[] bits)
     {
         bool[] bitsPermutation = new bool[64];
         for (int i = 0; i < 64; i++)
-        {
             bitsPermutation[i] = bits[IP_1[i]];
-        }
         return bitsPermutation;
     }
     public static bool[] BitArrayPermutationKey(bool[] key)
     {
         bool[] bitsPermutationKey = new bool[56];
         for (int i = 0; i < 56; i++)
-        {
             bitsPermutationKey[i] = key[PC1[i]];
-        }
         return bitsPermutationKey;
     }
     public static bool[] XOR(bool[] s1, bool[] s2)
@@ -400,15 +387,11 @@ public class DES
 
         // Копируем значения в новый массив с учетом сдвига
         for (int i = 0; i < length; i++)
-        {
             temp[i] = array[(i + n) % length];
-        }
 
         // Копируем значения обратно в оригинальный массив
         for (int i = 0; i < length; i++)
-        {
             array[i] = temp[i];
-        }
     }
     public static bool[] Encode(bool[] bitArray)
     {
@@ -447,11 +430,6 @@ public class DES
 
         for (int i = 15; i >= 0; i--)
         {
-            //bool[] tempLi = new bool[L.Length];
-            //L.CopyTo(tempLi, 0);
-            //L = XOR(R, f(tempLi, keys[i]));
-            //R = tempLi;
-
             bool[] temp = new bool[R.Length];
             R.CopyTo(temp, 0);
             R = XOR(L, f(temp, keys[i]));
@@ -459,7 +437,6 @@ public class DES
         }
 
         bool[] mergedLR = new bool[L.Length + R.Length];
-        // L и R поменял местами
         R.CopyTo(mergedLR, 0);
         L.CopyTo(mergedLR, R.Length);
 

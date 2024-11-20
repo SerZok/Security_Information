@@ -463,7 +463,7 @@ public class DES
         {
             bool[] temp = new bool[R.Length];
             R.CopyTo(temp, 0);
-            R = XOR(L, f(temp, keys[i]));
+            R = XOR (L, f(temp, keys[i]));
             L = temp;
         }
 

@@ -9,7 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "App2", "App2\App2.csproj", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "App3", "App3\App3.csproj", "{62AFA98B-8327-4AEC-B52C-758F3A65EA7D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "App4", "App4\App4.csproj", "{D69FF777-65CC-4811-BEAD-90E7BF385B63}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "App4", "App4\App4.csproj", "{D69FF777-65CC-4811-BEAD-90E7BF385B63}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "App5(DES_CBC)", "App5(DES_CBC)\App5(DES_CBC).csproj", "{B5FDEB93-859C-488A-9F72-D6FDC97E6867}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{D69FF777-65CC-4811-BEAD-90E7BF385B63}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D69FF777-65CC-4811-BEAD-90E7BF385B63}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D69FF777-65CC-4811-BEAD-90E7BF385B63}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B5FDEB93-859C-488A-9F72-D6FDC97E6867}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B5FDEB93-859C-488A-9F72-D6FDC97E6867}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B5FDEB93-859C-488A-9F72-D6FDC97E6867}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B5FDEB93-859C-488A-9F72-D6FDC97E6867}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
